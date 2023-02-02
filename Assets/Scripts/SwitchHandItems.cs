@@ -14,12 +14,14 @@ public class SwitchHandItems : MonoBehaviour
     [SerializeField] private float showItemDuration;
 
     private FlashlightController flashlightController;
+    private CameraController cameraController;
     private Sway swayFlashlight;
     private Sway swayCam;
 
     private void Awake()
     {
         flashlightController = flashLight.GetComponent<FlashlightController>();
+        cameraController = camera.GetComponent<CameraController>();
         swayFlashlight = flashLight.GetComponent<Sway>();
         swayCam = camera.GetComponent<Sway>();
     }
@@ -50,6 +52,7 @@ public class SwitchHandItems : MonoBehaviour
             camera.transform.DOLocalMove(itemHideLocalPosition, showItemDuration).From(cameraShowPos);
             
             flashlightController.EnableFlashLight();
+            cameraController.DisableCamera();
             swayCam.enabled = false;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -65,6 +68,7 @@ public class SwitchHandItems : MonoBehaviour
             });
             
             flashlightController.DisableFlashLight();
+            cameraController.EnableCamera();
             swayFlashlight.enabled = false;
         }
     }
