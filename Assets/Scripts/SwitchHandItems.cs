@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
 
@@ -15,10 +14,14 @@ public class SwitchHandItems : MonoBehaviour
     [SerializeField] private float showItemDuration;
 
     private FlashlightController flashlightController;
+    private Sway swayFlashlight;
+    private Sway swayCam;
 
     private void Awake()
     {
         flashlightController = flashLight.GetComponent<FlashlightController>();
+        swayFlashlight = flashLight.GetComponent<Sway>();
+        swayCam = camera.GetComponent<Sway>();
     }
 
     private void Start()
@@ -40,10 +43,14 @@ public class SwitchHandItems : MonoBehaviour
             //camera.SetActive(false);
             
             var itemHideLocalPosition = itemHideTransform.localPosition;
-            flashLight.transform.DOLocalMove(flashLightShowPos, showItemDuration).From(itemHideLocalPosition);
+            flashLight.transform.DOLocalMove(flashLightShowPos, showItemDuration).From(itemHideLocalPosition).OnComplete(() =>
+            {
+                swayFlashlight.enabled = true;
+            });
             camera.transform.DOLocalMove(itemHideLocalPosition, showItemDuration).From(cameraShowPos);
             
             flashlightController.EnableFlashLight();
+            swayCam.enabled = false;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
@@ -52,9 +59,13 @@ public class SwitchHandItems : MonoBehaviour
 
             var itemHideLocalPosition = itemHideTransform.localPosition;
             flashLight.transform.DOLocalMove(itemHideLocalPosition, showItemDuration).From(flashLightShowPos);
-            camera.transform.DOLocalMove(cameraShowPos, showItemDuration).From(itemHideLocalPosition);
+            camera.transform.DOLocalMove(cameraShowPos, showItemDuration).From(itemHideLocalPosition).OnComplete(() =>
+            {
+                swayCam.enabled = true;
+            });
             
             flashlightController.DisableFlashLight();
+            swayFlashlight.enabled = false;
         }
     }
 }
